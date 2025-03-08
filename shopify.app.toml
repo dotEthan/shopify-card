@@ -1,0 +1,36 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a15db1994aff70726b864d2843b0d433"
+application_url = "https://upcoming-blah-m-contrary.trycloudflare.com"
+embedded = true
+name = "dotEthan-test"
+handle = "dotethan-test"
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-01"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "write_products"
+
+[auth]
+redirect_urls = [
+  "https://upcoming-blah-m-contrary.trycloudflare.com/auth/callback",
+  "https://upcoming-blah-m-contrary.trycloudflare.com/auth/shopify/callback",
+  "https://upcoming-blah-m-contrary.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
