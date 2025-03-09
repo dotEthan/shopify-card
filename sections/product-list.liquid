@@ -1,6 +1,8 @@
 {% paginate collections.all.products by 8 %}
     {% for product in collections.all.products %}
-        {% render 'product-card', product: product %}
+        <div class="flex mr-15 ml-15">
+            {% render 'product-card', product: product %}
+        </div>
     {% else  %}
         <p>No products found</p>
     {% endfor %}

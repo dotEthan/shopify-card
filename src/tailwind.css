@@ -1,10 +1,21 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --color-custom-black: #111111;
+    --color-custom-light-grey: #e8e8e8;
+    --color-custom-blue: #0A4874;
+  }
+}
+
 @layer utilities {
     .border-custom-grey {
-      border-color: #e8e8e8;
+      border-color: var(--color-custom-light-grey);
     }
     .border-custom-blue {
-      border-color: #0A4874;
+      border-color: var(--color-custom-blue);
+    }
+    .text-custom-black {
+      color: var(--color-custom-black);
     }
 }
