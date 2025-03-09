@@ -18,7 +18,7 @@ Only those files updated by me will be using tailwindcss as base theme did not. 
 
 ### Snippets
 
-- product-card.liquid - Created do include all product-card code. I left the Javascript code in the file as it was all tightly coupled and, while it's getting longer (~150 lines), it's still quite readable. If I was adding more, I'd likely move it to it's own file. 
+- product-card.liquid - Created to include all product-card code. I left the Javascript code in the file as it was all tightly coupled and, while it's getting longer (~150 lines), it's still quite readable. If I was adding more, I'd likely move it to it's own file. 
 
 ### Styling
 
