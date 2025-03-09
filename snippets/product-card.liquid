@@ -1,0 +1,70 @@
+<div id="product-card" class="h-[508px] w-[360px]">
+    {% assign current_variant = product.selected_or_first_available_variant %}
+    <div class="flex flex-col justify-between h-full p-13">
+        <div id="product-image" class="p-10 border border-custom-grey">
+            {% if product.featured_image %}
+                <img
+                    id="product-featured-image"
+                    src="{{ product.featured_image | image_url: width: 315, height: 340 }}"
+                    alt="{{ product.featured_image.alt }}"
+                    width="315"
+                    height="340">
+            {% endif %}
+        </div>
+        <div id="product-details">
+            {% for variant in product.variants %}
+                <div
+                    class="inline-block w-9 h-9 rounded-full ml-1 mr-1 mt-5 mb-5 cursor-pointer ring-2 ring-white ring-inset {% if variant.id == current_variant.id %} border border-custom-blue {% endif %}"
+                    style="background-color: {{ variant.option1 | downcase }};"
+                    data-variant-id="{{ variant.id }}"
+                    data-variant-image="{% if variant.image %}{{ variant.image | image_url: width: 315, height: 340 }}{% endif %}"onClick="changeVariant(this)">&nbsp;</div>
+            {% endfor %}
+            <div>{{ product.vendor }}</div>
+            <div>{{ product.title }}</div>
+            <div>
+                <p>{{ product.price | money }}</p><p>{{ product.compare_at_price  | money }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentImage = '';
+    let currentSecondaryImage = '';
+    
+    function changeVariant(element) {
+        const variantId = element.getAttribute('data-variant-id');
+        const variantImage = element.getAttribute('data-variant-image');
+        
+        if (variantImage) {
+            currentImage = variantImage;
+            currentSecondaryImage = variantImage.replace(/(\.[^.]+)$/, '_secondary$1');
+            
+            document.getElementById('product-featured-image').src = currentImage;
+        }
+        
+        document.querySelectorAll('[data-variant-id]').forEach(swatch => {
+            if (swatch.getAttribute('data-variant-id') === variantId) {
+                swatch.classList.add('border', 'border-custom-blue');
+            } else {
+                swatch.classList.remove('border', 'border-custom-blue');
+            }
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const productImage = document.getElementById('product-featured-image');
+        if (!productImage) return;
+        
+        currentImage = productImage.src;
+        currentSecondaryImage = currentImage.replace(/(\.[^.]+)$/, '_secondary$1');
+        
+        productImage.addEventListener('mouseenter', function() {
+            productImage.src = currentSecondaryImage;
+        });
+        
+        productImage.addEventListener('mouseleave', function() {
+            productImage.src = currentImage;
+        });
+    });
+</script>
