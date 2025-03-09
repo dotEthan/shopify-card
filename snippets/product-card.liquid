@@ -1,0 +1,146 @@
+<div id="product-card-{{ product.id }}" class="h-[508px] w-[360px]">
+    {% assign current_variant = product.selected_or_first_available_variant %}
+    <div class="flex flex-col justify-between h-full p-13">
+        <div id="image-contain" class="p-10 border border-custom-grey relative">
+            <div class="relative">
+                {% if product.featured_image %}
+                    <a href="{{ product.url }}">
+                        <img
+                            id="product-image-{{ product.id }}"
+                            src="{{ product.featured_image | image_url: width: 315, height: 340 }}"
+                            alt="{{ product.featured_image.alt | default: product.title }}"
+                            class="cursor-pointer"
+                            width="315"
+                            height="340"
+                            loading="lazy">
+                    </a>
+                {% endif %}
+                {% if product.compare_at_price and product.compare_at_price > product.price %}
+                    <span class="absolute top-0 left-0 pt-2 pb-2 pl-5 pr-5 rounded-full border border-red text-base font-semibold text-red-600" aria-label="Sale Item">On Sale!</span>
+                {% endif %}
+            </div>
+        </div>
+        <div id="product-details-{{ product.id }}">
+            <div role="group" aria-label="Color Options" class="flex flex-wrap mt-5 mb-5">
+                {% for variant in product.variants %}
+                    <button
+                        class="inline-block w-9 h-9 rounded-full ml-1 mr-1 cursor-pointer ring-2 ring-white ring-inset focus:outline-none focus:ring-2 focus:ring-custom-blue {% if variant.id == current_variant.id %} border border-custom-blue {% endif %}"
+                        style="background-color: {{ variant.option1 | downcase }};"
+                        data-variant-id="{{ variant.id }}"
+                        data-variant-color="{{ variant.option1 }}"
+                        data-variant-image="{% if variant.image %}{{ variant.image | image_url: width: 315, height: 340 }}{% endif %}" onClick="changeVariant(this, {{ product.id }})"
+                        aria-label="Select {{ variant.option1 }} colour option"
+                        aria-pressed="{% if variant.id == current_variant.id %}true{% else %}false{% endif %}"
+                        type="button">&nbsp;</button>
+                {% endfor %}
+            </div>
+            <div class="text-[14px] leading-9 text-custom-black">{{ product.vendor }}</div>
+            <div class="text-[16px] leading-9 text-custom-black">{{ product.title }}</div>
+            <div class="text-[14px] leading-9">
+                {% if product.compare_at_price > product.price %}
+                  <span class="compare-price line-through text-gray-500 text-custom-black" aria-hidden="true">{{ product.compare_at_price | money }}</span>
+                  <span class="sale-price text-red-600">
+                    <span class="sr-only">Sale price:</span>
+                    {{ product.price | money }}
+                  </span>
+                  <span class="sr-only">Original price: {{ product.compare_at_price | money }}</span>
+                {% else %}
+                    <span class="regular-price text-custom-black">
+                      <span class="sr-only">Price:</span>
+                      {{ product.price | money }}
+                    </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const productImages = new Map();
+
+    /**
+    * Change the produc's image based on colour variant clicked.
+    * 
+    * @param {HTMLElement} element - The color button element that was clicked.
+    * @param {number} productId - The product ID.
+    */
+    function changeVariant(element, productId) {
+        const stringProdId = String(productId);
+        const variantId = element.getAttribute('data-variant-id');
+        const variantColor = element.getAttribute('data-variant-color');
+        const variantImage = element.getAttribute('data-variant-image');
+        const productImageElement = document.getElementById(`product-image-${productId}`);
+
+        if (variantImage && productImageElement) {
+            const productImageData = {
+                main: variantImage,
+                secondary: variantImage.replace(/(\.[^.]+)$/, '_secondary$1')
+            };
+            
+            productImages.set(stringProdId, productImageData);
+
+            productImageElement.src = productImageData.main;
+            productImageElement.alt = `${variantColor} ${productImageElement.alt.split(' ')[1]}`;
+            
+            // Update colour swatch "borders"
+            const currentProductCard = document.getElementById(`product-card-${productId}`);
+
+            if (currentProductCard) {
+                currentProductCard.querySelectorAll('[data-variant-id]').forEach(color => {
+                    const isSelected = color.getAttribute('data-variant-id') === variantId;
+                    color.setAttribute('aria-pressed', isSelected);
+                    if (isSelected) {
+                        color.classList.add('border', 'border-custom-blue');
+                    } else {
+                        color.classList.remove('border', 'border-custom-blue');
+                    }
+                });
+            }
+        }
+    }
+    
+    // On load set product images (main, and secondary for hover)
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('[id^="product-image-"]').forEach(productImage => {
+            if (!productImage) return;
+            
+            const productId = productImage.id.split('-').pop();
+
+            const currentImages = {
+                main: productImage.src,
+                secondary: productImage.src.replace(/(\.[^.]+)$/, '_secondary$1')
+            };
+
+            productImages.set(productId, currentImages);
+            
+            productImage.addEventListener('mouseenter', function() {
+                const imageData = productImages.get(productId);
+                if (imageData) {
+                    productImage.src = imageData.secondary;
+                }
+            });
+
+            productImage.addEventListener('mouseleave', function() {
+                const imageData = productImages.get(productId);
+                if (imageData) {
+                    productImage.src = imageData.main;
+                }
+            });
+            
+            // Keyboard support
+            productImage.addEventListener('focus', function() {
+                const imageData = productImages.get(productId);
+                if (imageData) {
+                    productImage.src = imageData.secondary;
+                }
+            });
+            
+            productImage.addEventListener('blur', function() {
+                const imageData = productImages.get(productId);
+                if (imageData) {
+                    productImage.src = imageData.main;
+                }
+            });
+        });
+    });
+</script>
