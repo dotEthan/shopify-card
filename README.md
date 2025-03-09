@@ -8,9 +8,13 @@ Preview available here: https://dotethan-co.myshopify.com/?_ab=0&_fd=0&_sc=1
 
 Only those files updated by me will be using tailwindcss as base theme did not. Base theme was "Dawn", as the ask was to just show the product card, I did not clean out the extra files. 
 
+### Templates
+
+- index.json -  Minimal changes to allow a simple display of a single product in the product-list on the front page for easy viewing.
+
 ### Sections
 
-- product-list.liquid -  Created to simply display the card with basic formatting. 
+- product-list.liquid -  Created a simple for loop to display the card with basic formatting. 
 
 ### Snippets
 
